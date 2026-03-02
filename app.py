@@ -430,7 +430,7 @@ elif page == "System Architecture":
         1. **Delinquency History**: The sheer count of times a borrower has historically failed to pay within a 30, 60, or 90 day window is the strongest predictor of future default.
         2. **Utilization**: `Revolving Utilization of Unsecured Lines` (e.g. maxing out credit cards) heavily inflates risk signals.
         3. **Debt-to-Income**: Individuals operating with severe debt ratios are flagged securely.
-        """, anchor=False)
+        """)
         
     with col2:
         with st.container(border=True):
