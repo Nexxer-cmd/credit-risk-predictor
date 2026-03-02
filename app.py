@@ -434,7 +434,7 @@ elif page == "System Architecture":
         
     with col2:
         with st.container(border=True):
-            st.markdown("#### Stack Profile", anchor=False)
+            st.markdown("#### Stack Profile")
             st.markdown("- **Frontend**: Streamlit 1.x")
             st.markdown("- **Theme**: Deep Space Black")
             st.markdown("- **Visualization**: Altair + Tooltips")
