@@ -354,7 +354,7 @@ elif page == "Data Insights Dashboard":
         st.error("⚠️ Could not load the dataset for insights. Ensure `cs-training.csv` is in the directory.")
     else:
         # Overview Cards
-        st.subheader("Dataset Snapshot")
+        st.subheader("Dataset Snapshot", anchor=False)
         m1, m2, m3, m4 = st.columns(4)
         m1.metric("Sample Size Analyzed", f"{len(df):,}")
         m2.metric("Average Age", f"{int(df['age'].mean())} yrs")
