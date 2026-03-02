@@ -3,14 +3,14 @@ import pandas as pd
 import joblib
 import altair as alt
 
-# Set page config for a premium, clean look
+# Set page config 
 st.set_page_config(
     page_title="Credit Risk Predictor",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for layout enhancements and animations
+# Custom CSS 
 st.markdown("""
     <style>
     /* Main background */
@@ -327,7 +327,7 @@ if page == "Risk Assessment System":
                     st.markdown("This applicant presents a high risk of defaulting. Careful consideration advised.")
                     progress_color = "#ef4444" # Red
                     
-                # Add a visual progress bar indicating risk level with animation
+                # Added a visual progress bar indicating risk level with animation
                 st.markdown(f'''
                     <div style="width: 100%; background-color: #2D3748; border-radius: 999px; height: 16px; margin-top: 15px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);">
                       <div style="width: {min(prob * 100, 100)}%; background-color: {progress_color}; height: 100%; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 999px;"></div>
