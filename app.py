@@ -370,7 +370,7 @@ elif page == "Data Insights Dashboard":
         tab1, tab2, tab3 = st.tabs(["Age Demographics", "Income & Debt", "Data Table"])
         
         with tab1:
-            st.markdown("#### Does age impact loan defaulting?", anchor=False)
+            st.markdown("#### Does age impact loan defaulting?")
             st.markdown("<p style='color: #A0AEC0;'>Generally, younger borrowers exhibit slightly higher default rates as they establish their financial profiles.</p>", unsafe_allow_html=True)
             
             chart_col1, chart_col2 = st.columns(2)
@@ -395,7 +395,7 @@ elif page == "Data Insights Dashboard":
                 st.altair_chart(chart_rate, use_container_width=True)
 
         with tab2:
-            st.markdown("#### How does income correlate with debt obligations?", anchor=False)
+            st.markdown("#### How does income correlate with debt obligations?")
             st.markdown("<p style='color: #A0AEC0;'>Hover over the points in the scatter plot below. Outliers with high debt ratios represent stressed profiles.</p>", unsafe_allow_html=True)
             
             filtered_df = df[df['MonthlyIncome'] < 25000].dropna(subset=['MonthlyIncome', 'DebtRatio']).sample(min(1500, len(df)))
@@ -411,7 +411,7 @@ elif page == "Data Insights Dashboard":
             st.dataframe(df.head(100), use_container_width=True)
 
 elif page == "System Architecture":
-    st.title("System Architecture", anchor=False)
+    st.title("System Architecture")
     st.markdown("<div class='info-box'>Building robust financial safety nets through machine learning technology.</div>", unsafe_allow_html=True)
     
     col1, col2 = st.columns([2, 1])
