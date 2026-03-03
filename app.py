@@ -346,7 +346,7 @@ if page == "Risk Assessment System":
 
 elif page == "Data Insights Dashboard":
     st.title("Data Insights & Exploration", anchor=False)
-    st.markdown("<div class='info-box'>Explore a sample of the historical banking dataset used to train our AI model. Understand key demographic and financial trends.</div>", unsafe_allow_html=True)
+    st.markdown("<div class='info-box'>Explore a sample of the historical banking dataset used to train our AIML model. Understand key demographic and financial trends.</div>", unsafe_allow_html=True)
     
     df = load_data()
     
