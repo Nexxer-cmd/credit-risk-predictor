@@ -165,7 +165,7 @@ with st.sidebar:
 
 if page == "Risk Assessment System":
     st.title("Credit Default Risk Analysis", anchor=False)
-    st.markdown("<div class='info-box'>Welcome. Please enter the applicant's financial profile below to generate an AI-powered risk assessment.</div>", unsafe_allow_html=True)
+    st.markdown("<div class='info-box'>Welcome. Please enter the applicant's financial profile below to generate an AIML-powered risk assessment.</div>", unsafe_allow_html=True)
 
     # Initialize session state for wizard steps
     if 'step' not in st.session_state:
