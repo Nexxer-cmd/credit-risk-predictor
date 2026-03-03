@@ -407,7 +407,7 @@ elif page == "Data Insights Dashboard":
             st.altair_chart(chart_scatter, use_container_width=True)
             
         with tab3:
-            st.markdown("#### Raw Sample Viewer", anchor=False)
+            st.markdown("#### Raw Sample Viewer")
             st.dataframe(df.head(100), use_container_width=True)
 
 elif page == "System Architecture":
