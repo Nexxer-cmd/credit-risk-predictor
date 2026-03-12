@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import joblib
 import altair as alt
+import base64
+import os
 
 # Set page config 
 st.set_page_config(
@@ -10,26 +12,99 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS 
+# --- Background Video Logic (Local + Online Fallback) ---
+def add_bg_video():
+    local_video_path = "bg_video.mp4" # Name of your local video file
+    online_video_url = "https://videos.pexels.com/video-files/3129957/3129957-uhd_2560_1440_30fps.mp4"
+
+    # Check if local video exists and convert to base64
+    if os.path.exists(local_video_path):
+        try:
+            with open(local_video_path, "rb") as video_file:
+                video_base64 = base64.b64encode(video_file.read()).decode('utf-8')
+            video_src = f"data:video/mp4;base64,{video_base64}"
+        except Exception as e:
+            # If reading local file fails, use online
+            video_src = online_video_url
+    else:
+        # If local file does not exist, use online
+        video_src = online_video_url
+
+    # 1. Inject the Video Tag with the dynamic source
+    st.markdown(f"""
+        <video autoplay loop muted playsinline id="bg-video">
+            <source src="{video_src}" type="video/mp4">
+        </video>
+    """, unsafe_allow_html=True)
+
+add_bg_video()
+
+# --- Premium UI CSS Styling ---
+# Keeping the CSS in a separate markdown block prevents f-string conflicts
 st.markdown("""
     <style>
-    /* Main background */
+    /* Premium background video styling */
+    #bg-video {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        z-index: -100;
+        object-fit: cover;
+        opacity: 0.35; /* Dimmed slightly more to keep focus perfectly on UI */
+        pointer-events: none; /* Prevent interacting with video */
+    }
+    
+    /* Make main wrappers transparent to reveal video */
     .stApp {
+        background: transparent !important;
         font-family: 'Inter', sans-serif;
+    }
+    [data-testid="stHeader"] {
+        background: transparent !important;
+    }
+    
+    /* High-end glassmorphism for sidebar */
+    section[data-testid="stSidebar"] {
+        background-color: rgba(15, 17, 21, 0.6) !important;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+    }
+    
+    /* High-end glassmorphism for containers and sections */
+    .stContainer {
+        background-color: rgba(26, 29, 36, 0.65) !important;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-radius: 16px !important;
+        padding: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+        margin-bottom: 20px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+    }
+    .stContainer:hover {
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        transform: translateY(-2px);
     }
     
     /* Headers with gradient text for a premium feel */
     h1 {
-        color: #E2E8F0;
+        color: #FFFFFF;
         font-weight: 800;
         letter-spacing: -0.025em;
-        background: -webkit-linear-gradient(45deg, #60a5fa, #a78bfa);
+        background: -webkit-linear-gradient(135deg, #93C5FD, #C4B5FD, #F9A8D4);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: 0.5rem;
     }
     h2, h3 {
-        color: #E2E8F0;
+        color: #F8FAFC;
         font-weight: 600;
         letter-spacing: -0.015em;
     }
@@ -39,87 +114,111 @@ st.markdown("""
         accent-color: #3b82f6;
     }
     
-    /* Metrics box styling */
-    div[data-testid="stMetricValue"] {
-        font-size: 3rem;
-        font-weight: 700;
-        color: #60a5fa;
+    /* Base input field styling update for premium look */
+    div[data-baseweb="input"], div[data-baseweb="base-input"] > input, div[data-baseweb="select"] {
+        background-color: rgba(0, 0, 0, 0.3) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border-radius: 8px;
+        color: white !important;
+    }
+    div[data-baseweb="input"]:focus-within {
+        border-color: #60a5fa !important;
+        box-shadow: 0 0 0 1px #60a5fa !important;
     }
     
-    /* Subtle borders for containers */
-    .stContainer {
-        background-color: #1A1D24;
-        border-radius: 12px;
-        padding: 30px;
-        border: 1px solid #2D3748;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        margin-bottom: 20px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* Metrics box styling */
+    div[data-testid="stMetricValue"] {
+        font-size: 3.5rem;
+        font-weight: 800;
+        background: -webkit-linear-gradient(45deg, #60a5fa, #34d399);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
-    .stContainer:hover {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+    div[data-testid="stMetricLabel"] {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #94a3b8;
     }
     
     /* Styling the primary buttons */
     .stButton>button[kind="primary"] {
         width: 100%;
-        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
         color: white;
         font-weight: 600;
         border: none;
-        border-radius: 8px;
+        border-radius: 12px;
         padding: 0.75rem 1.5rem;
         transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
     }
     
     .stButton>button[kind="primary"]:hover {
-        background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        box-shadow: 0 8px 25px rgba(124, 58, 237, 0.6);
         transform: translateY(-2px);
     }
     
     /* Styling secondary buttons */
     .stButton>button[kind="secondary"] {
         width: 100%;
-        background-color: #2D3748;
+        background-color: rgba(45, 55, 72, 0.6);
+        backdrop-filter: blur(8px);
         color: #E2E8F0;
         font-weight: 600;
-        border: 1px solid #4A5568;
-        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
         padding: 0.75rem 1.5rem;
         transition: all 0.3s ease;
     }
     
     .stButton>button[kind="secondary"]:hover {
-        background-color: #4A5568;
-        border-color: #718096;
+        background-color: rgba(74, 85, 104, 0.8);
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
     }
     
     /* Info box styling */
     .info-box {
-        background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.02) 100%);
+        background: rgba(30, 41, 59, 0.6);
+        backdrop-filter: blur(12px);
         border-left: 4px solid #3b82f6;
-        padding: 15px 20px;
-        border-radius: 4px 8px 8px 4px;
+        padding: 20px 25px;
+        border-radius: 8px 12px 12px 8px;
         margin-bottom: 25px;
         color: #E2E8F0;
-        font-size: 1rem;
-    }
-    
-    /* Sidebar styling overrides */
-    section[data-testid="stSidebar"] {
-        background-color: #11141A;
-        border-right: 1px solid #2D3748;
+        font-size: 1.05rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        border-left: 4px solid #60a5fa;
     }
     
     /* Radio button active state highlight */
     div.row-widget.stRadio > div{
         flex-direction:column;
-        gap: 10px;
+        gap: 12px;
+    }
+    
+    /* Tweak tabs for premium feel */
+    button[data-baseweb="tab"] {
+        background-color: transparent !important;
+        color: #94a3b8 !important;
+        font-weight: 600 !important;
+    }
+    button[data-baseweb="tab"][aria-selected="true"] {
+        color: #60a5fa !important;
+        border-bottom-color: #60a5fa !important;
+    }
+    
+    /* Fix DataFrame backgrounds */
+    [data-testid="stDataFrame"] {
+        background-color: rgba(15, 23, 42, 0.7) !important;
+        border-radius: 12px;
+        padding: 10px;
     }
     </style>
 """, unsafe_allow_html=True)
 
+# --- Data Loading ---
 @st.cache_resource
 def load_model():
     return joblib.load("model.joblib")
@@ -162,7 +261,6 @@ with st.sidebar:
 
 
 # --- Page Routing Logic ---
-
 if page == "Risk Assessment System":
     st.title("Credit Default Risk Analysis", anchor=False)
     st.markdown("<div class='info-box'>Welcome. Please enter the applicant's financial profile below to generate an AIML-powered risk assessment.</div>", unsafe_allow_html=True)
@@ -327,7 +425,7 @@ if page == "Risk Assessment System":
                     st.markdown("This applicant presents a high risk of defaulting. Careful consideration advised.")
                     progress_color = "#ef4444" # Red
                     
-                # Added a visual progress bar indicating risk level with animation
+                # Visual progress bar indicating risk level with animation
                 st.markdown(f'''
                     <div style="width: 100%; background-color: #2D3748; border-radius: 999px; height: 16px; margin-top: 15px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);">
                       <div style="width: {min(prob * 100, 100)}%; background-color: {progress_color}; height: 100%; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 999px;"></div>
